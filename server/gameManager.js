@@ -166,6 +166,7 @@ class GameManager {
         if (!room) return;
 
         room.gameState = 'QUESTION';
+        room.round++; // Increment round counter
         this.clearRoomTimer(room);
 
         // Pick random question not used AND from selected deck

@@ -9,6 +9,7 @@ function Host() {
     const [question, setQuestion] = useState(null);
     const [timer, setTimer] = useState(0);
     const [answers, setAnswers] = useState([]);
+    const [round, setRound] = useState(0);
 
     // Host-Player State
     const [isHostPlayer, setIsHostPlayer] = useState(false);
@@ -54,6 +55,7 @@ function Host() {
             if (data.timer) setTimer(data.timer);
             if (data.groups) setAnswers(data.groups);
             if (data.players) setPlayers(data.players);
+            if (data.round) setRound(data.round);
         });
 
         socket.on('answer_received', () => {
@@ -256,7 +258,7 @@ function Host() {
         <div className="text-center max-w-5xl w-full flex flex-col justify-center h-full px-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8 md:mb-12">
                 <span className="px-6 py-2 bg-purple-900 rounded-full text-purple-300 font-bold uppercase tracking-widest text-sm md:text-lg border border-purple-700">
-                    Round {question?.id || 1}
+                    Round {round}
                 </span>
             </motion.div>
             <motion.h1
