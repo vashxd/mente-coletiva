@@ -12,10 +12,18 @@ function Host() {
 
     // Host-Player State
     const [isHostPlayer, setIsHostPlayer] = useState(false);
-    const [hostNickname, setHostNickname] = useState('');
     const [hostAnswer, setHostAnswer] = useState('');
     const [hostSubmitted, setHostSubmitted] = useState(false);
     const [showHostInput, setShowHostInput] = useState(false); // Toggle for input UI
+
+    // Settings State
+    const [settings, setSettings] = useState({
+        timerDuration: 30,
+        questionDeck: 'classic',
+        winCondition: 'rounds',
+        winValue: 10
+    });
+    const [showSettings, setShowSettings] = useState(false);
 
     useEffect(() => {
         socket.connect();
@@ -60,7 +68,10 @@ function Host() {
         };
     }, [isHostPlayer]);
 
-    const startGame = () => socket.emit('start_game', { roomCode });
+    const startGame = () => {
+        socket.emit('update_settings', { roomCode, settings }); // Ensure settings are synced before start
+        socket.emit('start_game', { roomCode });
+    };
 
     const joinAsHost = () => {
         if (!hostNickname.trim()) return;
@@ -275,17 +286,19 @@ function Host() {
                         SEND
                     </button>
                 </motion.div>
-            )}
+                </motion.div>
+    )
+}
 
-            <div className="z-10 w-full h-full flex flex-col items-center">
-                {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
-                {gameState === 'LOBBY' && renderLobby()}
-                {gameState === 'QUESTION' && renderQuestion()}
-                {gameState === 'ANSWER_INPUT' && renderInput()}
-                {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
-                {gameState === 'SCOREBOARD' && renderScoreboard()}
-            </div>
-        </div>
+<div className="z-10 w-full h-full flex flex-col items-center">
+    {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
+    {gameState === 'LOBBY' && renderLobby()}
+    {gameState === 'QUESTION' && renderQuestion()}
+    {gameState === 'ANSWER_INPUT' && renderInput()}
+    {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
+    {gameState === 'SCOREBOARD' && renderScoreboard()}
+</div>
+        </div >
     );
 }
 

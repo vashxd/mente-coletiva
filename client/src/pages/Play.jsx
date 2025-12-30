@@ -16,33 +16,41 @@ function Play() {
 
     useEffect(() => {
         socket.connect();
-        socket.on('disconnect', () => setStep('LOGIN'));
-
-        socket.on('game_state_update', (data) => {
-            setGameState(data.state);
-            if (data.state === 'QUESTION') {
-                setHasAnswered(false);
-                setAnswer('');
-            }
-            if (data.question) setQuestion(data.question);
-            // Update personal score if sent
-            if (data.players) {
-                const me = Object.values(data.players).find(p => p.id === socket.id);
-                if (me) setScore(me.score);
+        socket.on('disconnect', (reason) => {
+            console.log('Socket Disconnected:', reason);
+            // Don't go to login immediately if it might be temporary
+            if (reason === 'io server disconnect' || reason === 'io client disconnect') {
+                setStep('LOGIN');
             }
         });
 
-        socket.on('answer_received', () => {
-            setHasAnswered(true);
-        });
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                console.log('App Foregrounded. Checking connection...');
+                if (!socket.connected) {
+                    socket.connect();
+                }
+                // Try to rejoin if we have credentials
+                if (roomCode && nickname) {
+                    socket.emit('join_room', { roomCode, nickname }, (res) => {
+                        if (!res.success) console.warn("Background Rejoin Failed:", res.error);
+                        else console.log("Background Rejoin Success");
+                    });
+                }
+                requestWakeLock();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
             socket.off('game_state_update');
             socket.off('answer_received');
             socket.off('disconnect');
             releaseWakeLock();
         };
-    }, []);
+    }, [roomCode, nickname]); // Dep dependency added so rejoin works
 
     const requestWakeLock = async () => {
         try {
