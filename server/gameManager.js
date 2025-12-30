@@ -172,7 +172,21 @@ class GameManager {
         // Assuming 'questions' is now an object { classic: [], polemic: [] ... } or array with category property?
         // Let's assume we will Refactor questions.js next. for now, keep array logic but we will need to change this.
         // TEMP: Filter by category if we had it, or just use all for now until questions.js is updated.
-        const deckQuestions = Array.isArray(questions) ? questions : (questions[room.settings.questionDeck] || questions['classic'] || []);
+        let deckQuestions = [];
+        const selection = room.settings.questionDeck;
+
+        if (selection === 'all') {
+            // Combine all decks
+            deckQuestions = Object.values(questions).flat();
+        } else if (Array.isArray(selection)) {
+            // Combine selected decks
+            selection.forEach(key => {
+                if (questions[key]) deckQuestions = deckQuestions.concat(questions[key]);
+            });
+        } else {
+            // Single deck fallback
+            deckQuestions = questions[selection] || questions['classic'] || [];
+        }
 
         const availableQuestions = deckQuestions.filter(q => !room.usedQuestions.includes(q.id));
         if (availableQuestions.length === 0) {

@@ -173,18 +173,42 @@ function Host() {
                             />
                         </div>
 
-                        {/* Deck */}
+
+                        {/* Deck Selection */}
                         <div className="space-y-2">
-                            <label className="text-gray-400 font-bold uppercase tracking-wider">Question Deck</label>
-                            <select
-                                value={settings.questionDeck}
-                                onChange={e => setSettings({ ...settings, questionDeck: e.target.value })}
-                                className="w-full bg-gray-800 text-white border border-gray-600 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500"
-                            >
-                                <option value="classic">Classic (Fun & General)</option>
-                                <option value="polemic">Polemic (Spicy!)</option>
-                                <option value="deep">Philosophical (Deep)</option>
-                            </select>
+                            <label className="text-gray-400 font-bold uppercase tracking-wider">Question Decks</label>
+
+                            <div className="flex gap-2 mb-2">
+                                <button
+                                    onClick={() => setSettings({ ...settings, questionDeck: 'all' })}
+                                    className={`px-3 py-1 rounded-full text-sm font-bold border transition ${settings.questionDeck === 'all' ? 'bg-purple-600 border-purple-400 text-white' : 'bg-gray-800 border-gray-600 text-gray-400'}`}
+                                >
+                                    Mix All 🎲
+                                </button>
+                                <button
+                                    onClick={() => setSettings({ ...settings, questionDeck: ['classic'] })}
+                                    className="px-3 py-1 rounded-full text-sm font-bold border bg-gray-800 border-gray-600 text-gray-400 hover:bg-gray-700"
+                                >
+                                    Reset
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-gray-800 rounded-xl border border-gray-700">
+                                {DECK_OPTIONS.map(opt => {
+                                    const isSelected = settings.questionDeck === 'all' || (Array.isArray(settings.questionDeck) && settings.questionDeck.includes(opt.id)) || settings.questionDeck === opt.id;
+                                    return (
+                                        <button
+                                            key={opt.id}
+                                            onClick={() => settings.questionDeck !== 'all' && toggleDeck(opt.id)}
+                                            disabled={settings.questionDeck === 'all'}
+                                            className={`text-left px-3 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 ${isSelected ? 'bg-purple-900 text-purple-200' : 'hover:bg-gray-700 text-gray-400'} ${settings.questionDeck === 'all' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        >
+                                            <div className={`w-4 h-4 rounded-full border ${isSelected ? 'bg-purple-500 border-purple-500' : 'border-gray-500'}`}></div>
+                                            {opt.label}
+                                        </button>
+                                    )
+                                })}
+                            </div>
                         </div>
 
                         {/* Win Condition */}
@@ -342,8 +366,40 @@ function Host() {
         )
     }
 
+
+    // Available Decks
+    const DECK_OPTIONS = [
+        { id: 'classic', label: 'Classic' },
+        { id: 'polemic', label: 'Polemic' },
+        { id: 'deep', label: 'Deep' },
+        { id: 'technology', label: 'Technology' },
+        { id: 'relationships', label: 'Relationships' },
+        { id: 'nostalgia', label: 'Nostalgia' },
+        { id: 'embarrassing', label: 'Vergonha' },
+        { id: 'travel', label: 'Travel' },
+        { id: 'money', label: 'Money' },
+        { id: 'party', label: 'Party' },
+        { id: 'cinema', label: 'Cinema' },
+        { id: 'comics', label: 'Comics' },
+        { id: 'popculture', label: 'Pop Culture' }
+    ];
+
+    const toggleDeck = (deckId) => {
+        let current = settings.questionDeck;
+        if (current === 'all') current = [];
+        if (typeof current === 'string') current = [current];
+
+        if (current.includes(deckId)) {
+            const newVal = current.filter(d => d !== deckId);
+            setSettings({ ...settings, questionDeck: newVal.length ? newVal : 'classic' });
+        } else {
+            setSettings({ ...settings, questionDeck: [...current, deckId] });
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#1a1b26] text-white flex flex-col items-center justify-center p-4 lg:p-12 overflow-hidden relative font-sans">
+
             <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black opacity-50"></div>
 
             {/* HOST PLAYER OVERLAY */}
