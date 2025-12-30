@@ -224,8 +224,7 @@ function Host() {
                         </button>
                     </div>
                 </div>
-            )}
-            );
+
 
     const renderQuestion = () => (
             <div className="text-center max-w-5xl w-full flex flex-col justify-center h-full px-4">
