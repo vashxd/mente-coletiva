@@ -123,7 +123,7 @@ module.exports = {
         { "id": 908, "category": "Festa", "text": "Qual a pior música para tocar numa festa?" },
         { "id": 909, "category": "Festa", "text": "O que ninguém leva mas todo mundo usa na festa?" },
         { "id": 910, "category": "Festa", "text": "Qual a desculpa mais usada para não ir numa festa?" }
-    ]
+    ],
     "cinema": [
         { "id": 1001, "category": "Cinema", "text": "Qual o filme que todo mundo chora no final?" },
         { "id": 1002, "category": "Cinema", "text": "Qual o pior clichê dos filmes de terror?" },
