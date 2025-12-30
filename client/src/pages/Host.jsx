@@ -286,18 +286,16 @@ function Host() {
                         SEND
                     </button>
                 </motion.div>
-                </motion.div>
-    )
-}
+            )}
 
-<div className="z-10 w-full h-full flex flex-col items-center">
-    {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
-    {gameState === 'LOBBY' && renderLobby()}
-    {gameState === 'QUESTION' && renderQuestion()}
-    {gameState === 'ANSWER_INPUT' && renderInput()}
-    {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
-    {gameState === 'SCOREBOARD' && renderScoreboard()}
-</div>
+            <div className="z-10 w-full h-full flex flex-col items-center">
+                {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
+                {gameState === 'LOBBY' && renderLobby()}
+                {gameState === 'QUESTION' && renderQuestion()}
+                {gameState === 'ANSWER_INPUT' && renderInput()}
+                {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
+                {gameState === 'SCOREBOARD' && renderScoreboard()}
+            </div>
         </div >
     );
 }
