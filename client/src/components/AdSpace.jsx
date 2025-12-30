@@ -31,7 +31,7 @@ function AdSpace() {
             <ins className="adsbygoogle"
                 style={{ display: 'block' }}
                 data-ad-client="ca-pub-6191818565281230"
-                data-ad-slot="1234567890"
+                data-ad-slot="7077366978"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
         </div>
