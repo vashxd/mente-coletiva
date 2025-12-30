@@ -24,6 +24,27 @@ function Play() {
             }
         });
 
+        socket.on('game_state_update', (data) => {
+            setGameState(data.state);
+            if (data.state === 'QUESTION') {
+                setHasAnswered(false);
+                setAnswer('');
+            }
+            if (data.question) setQuestion(data.question);
+            // Update personal score if sent
+            if (data.players) {
+                const me = Object.values(data.players).find(p => p.id === socket.id);
+                if (me) {
+                    setScore(me.score);
+                    if (me.isAnswered !== undefined) setHasAnswered(me.isAnswered);
+                }
+            }
+        });
+
+        socket.on('answer_received', () => {
+            setHasAnswered(true);
+        });
+
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
                 console.log('App Foregrounded. Checking connection...');
