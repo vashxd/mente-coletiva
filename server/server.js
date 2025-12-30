@@ -51,6 +51,10 @@ io.on('connection', (socket) => {
         gameManager.startGame(roomCode);
     });
 
+    socket.on('update_settings', ({ roomCode, settings }) => {
+        gameManager.updateSettings(roomCode, settings);
+    });
+
     socket.on('submit_answer', ({ roomCode, answer }) => {
         gameManager.submitAnswer(roomCode, socket.id, answer);
     });
