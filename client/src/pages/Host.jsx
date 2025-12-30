@@ -12,6 +12,7 @@ function Host() {
 
     // Host-Player State
     const [isHostPlayer, setIsHostPlayer] = useState(false);
+    const [hostNickname, setHostNickname] = useState('');
     const [hostAnswer, setHostAnswer] = useState('');
     const [hostSubmitted, setHostSubmitted] = useState(false);
     const [showHostInput, setShowHostInput] = useState(false); // Toggle for input UI
