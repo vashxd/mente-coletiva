@@ -203,26 +203,27 @@ function Play() {
                     </>
                 ) : (
 
-                    { gameState === 'QUESTION' && (
-                        <div className="flex-1 flex flex-col justify-center">
-                            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Look up!</h2>
-                            <p className="text-3xl font-black leading-tight animate-in fade-in zoom-in duration-500">{question?.text}</p>
-                        </div>
-                    )}
-                {(gameState === 'REVEAL' || gameState === 'GROUPING') && (
-                    <div>
-                        <div className="text-2xl font-bold mb-4">Results Time!</div>
-                        <AdSpace />
-                    </div>
+                    <>
+                        {gameState === 'QUESTION' && (
+                            <div className="flex-1 flex flex-col justify-center">
+                                <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Look up!</h2>
+                                <p className="text-3xl font-black leading-tight animate-in fade-in zoom-in duration-500">{question?.text}</p>
+                            </div>
+                        )}
+                        {(gameState === 'REVEAL' || gameState === 'GROUPING') && (
+                            <div>
+                                <div className="text-2xl font-bold mb-4">Results Time!</div>
+                                <AdSpace />
+                            </div>
+                        )}
+                        {gameState === 'SCOREBOARD' && <div className="text-3xl font-bold text-yellow-400">Check the Ranking! 🏆</div>}
+                    </>
                 )}
-                {gameState === 'SCOREBOARD' && <div className="text-3xl font-bold text-yellow-400">Check the Ranking! 🏆</div>}
-            </>
-                )}
-            {/* Debug verify state */}
-            {/* <div className="fixed bottom-1 left-1 text-[10px] text-gray-800 pointer-events-none">State: {gameState}</div> */}
-        </div>
-            </div >
-            );
+                {/* Debug verify state */}
+                {/* <div className="fixed bottom-1 left-1 text-[10px] text-gray-800 pointer-events-none">State: {gameState}</div> */}
+            </div>
+        </div >
+    );
 }
 
 export default Play;
