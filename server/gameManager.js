@@ -235,7 +235,8 @@ class GameManager {
             state: 'QUESTION',
             question: room.currentQuestion,
             round: room.round,
-            totalRounds: room.maxRounds
+            totalRounds: room.maxRounds,
+            players: room.players // Send full player list to reset 'isAnswered' status on clients
         });
 
         // Auto move to input after 5 seconds
