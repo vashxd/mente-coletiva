@@ -15,7 +15,7 @@ class SemanticMatcher {
             'meu', 'minha', 'seu', 'sua', 'nosso', 'nossa',
             'muito', 'muita', 'pouco', 'pouca', 'bom', 'boa', 'ruim',
             'grande', 'pequeno', 'ser', 'estar', 'ter', 'fazer',
-            'eu', 'tu', 'ele', 'ela', 'nós', 'vós', 'eles', 'elas'
+            'eu', 'tu', 'ele', 'ela', 'nós', 'vós', 'eles', 'elas', 'alto', 'baixo'
         ]);
 
         // Synonym Map (Canonical Form -> List of Synonyms)
@@ -23,14 +23,45 @@ class SemanticMatcher {
         // e.g. 'limpeza' is canonical. 'faxina' maps to 'limpeza'.
         this.synonymMap = new Map();
 
-        this.addSynonyms('limpeza', ['faxina', 'asseio', 'higienização']);
-        this.addSynonyms('dinheiro', ['grana', 'bufunfa', 'tostão', 'verba']);
-        this.addSynonyms('comida', ['rango', 'refeição', 'alimento']);
-        this.addSynonyms('trabalho', ['emprego', 'trampo', 'serviço', 'labuta']);
-        this.addSynonyms('carro', ['automóvel', 'veículo', 'possante']);
-        this.addSynonyms('celular', ['smartphone', 'telemóvel', 'zap']);
-        this.addSynonyms('feliz', ['alegre', 'contente', 'satisfeito']);
-        this.addSynonyms('triste', ['chateado', 'infeliz', 'melancólico']);
+        this.addSynonyms('limpeza', ['faxina', 'asseio', 'higienização', 'lavagem']);
+        this.addSynonyms('dinheiro', ['grana', 'bufunfa', 'tostão', 'verba', 'dindim', 'recurso', 'capital', 'fatura']);
+        this.addSynonyms('comida', ['rango', 'refeição', 'alimento', 'prato', 'comestível', 'bóia', 'lanche']);
+        this.addSynonyms('trabalho', ['emprego', 'trampo', 'serviço', 'labuta', 'tarefa', 'profissão', 'ofício', 'ocupação']);
+        this.addSynonyms('carro', ['automóvel', 'veículo', 'possante', 'caranga', 'viatura', 'auto']);
+        this.addSynonyms('celular', ['smartphone', 'telemóvel', 'zap', 'aparelho', 'telefone']);
+        this.addSynonyms('feliz', ['alegre', 'contente', 'satisfeito', 'radiante', 'animado', 'felicidade']);
+        this.addSynonyms('triste', ['chateado', 'infeliz', 'melancólico', 'deprimido', 'tristeza', 'magoado']);
+        this.addSynonyms('casa', ['lar', 'moradia', 'residência', 'habitação', 'domicílio', 'teto']);
+        this.addSynonyms('amigo', ['colega', 'parceiro', 'companheiro', 'brother', 'camarada', 'chapa']);
+        this.addSynonyms('bonito', ['lindo', 'belo', 'formoso', 'atraente', 'gato', 'maravilhoso']);
+        this.addSynonyms('feio', ['horrível', 'bizarro', 'esquisito', 'desagradável', 'feioso']);
+        this.addSynonyms('rápido', ['veloz', 'ágil', 'ligeiro', 'depressa', 'acelerado']);
+        this.addSynonyms('devagar', ['lento', 'vagaroso', 'demorado']);
+        this.addSynonyms('morrer', ['falecer', 'bater as botas', 'partir', 'perecer', 'morte']);
+        this.addSynonyms('cachorro', ['cão', 'dog', 'pet', 'animal', 'bicho']);
+        this.addSynonyms('gato', ['bichano', 'felino', 'pet', 'animal', 'bicho']);
+        this.addSynonyms('escola', ['colégio', 'instituição', 'ensino', 'educação', 'aula']);
+        this.addSynonyms('professor', ['mestre', 'educador', 'docente', 'instrutor', 'profe']);
+        this.addSynonyms('medo', ['pavor', 'terror', 'susto', 'receio', 'fobia', 'horror']);
+        this.addSynonyms('amor', ['paixão', 'afeto', 'carinho', 'adoração', 'amar']);
+        this.addSynonyms('festa', ['balada', 'comemoração', 'evento', 'celebração', 'rolê']);
+        this.addSynonyms('bebida', ['drink', 'goró', 'líquido', 'trago', 'álcool']);
+        this.addSynonyms('dormir', ['sono', 'descansar', 'cochilar', 'soneca', 'adormecer']);
+        this.addSynonyms('futebol', ['fut', 'bola', 'pelada', 'jogo', 'partida']);
+        this.addSynonyms('música', ['som', 'canção', 'melodia', 'faixa', 'ritmo']);
+        this.addSynonyms('filme', ['longa', 'película', 'cinema']);
+        this.addSynonyms('computador', ['pc', 'machine', 'desktop', 'notebook', 'laptop']);
+        this.addSynonyms('internet', ['web', 'rede', 'net', 'online', 'conexão']);
+        this.addSynonyms('viajar', ['passear', 'turistar', 'viagem', 'excursão']);
+        this.addSynonyms('família', ['parentes', 'ente queridos', 'casa']);
+        this.addSynonyms('roupa', ['vestimenta', 'traje', 'pano', 'look']);
+        this.addSynonyms('sapato', ['calçado', 'tênis', 'bota', 'sandália']);
+        this.addSynonyms('banheiro', ['privada', 'sanitário', 'wc', 'toalete']);
+        this.addSynonyms('cama', ['leito', 'colchão']);
+        this.addSynonyms('sol', ['astro rei', 'calor', 'dia']);
+        this.addSynonyms('chuva', ['temporal', 'aguaceiro', 'pé d\'água']);
+        this.addSynonyms('mentira', ['falsidade', 'lorota', 'enganação', 'caô']);
+        this.addSynonyms('verdade', ['realidade', 'fato', 'certeza']);
     }
 
     addSynonyms(canonical, synonyms) {
