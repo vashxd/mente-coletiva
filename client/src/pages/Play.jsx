@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import socket from '../services/socket';
 import AdSpace from '../components/AdSpace';
+import QuestionView from '../components/Game/QuestionView';
+import RevealView from '../components/Game/RevealView';
+import ScoreboardView from '../components/Game/ScoreboardView';
 
 function Play() {
     const [step, setStep] = useState('LOGIN');
@@ -11,6 +14,8 @@ function Play() {
     const [answer, setAnswer] = useState('');
     const [hasAnswered, setHasAnswered] = useState(false);
     const [score, setScore] = useState(0);
+    const [players, setPlayers] = useState({});
+    const [answers, setAnswers] = useState([]); // Grouped answers from server
 
     const wakeLock = useRef(null);
 
@@ -32,8 +37,10 @@ function Play() {
                 setAnswer('');
             }
             if (data.question) setQuestion(data.question);
-            // Update personal score if sent
+            if (data.groups) setAnswers(data.groups);
             if (data.players) {
+                setPlayers(data.players);
+                // Update personal score
                 const me = Object.values(data.players).find(p => p.id === socket.id);
                 if (me) {
                     setScore(me.score);
@@ -108,15 +115,20 @@ function Play() {
 
     // --- Render Steps ---
 
+
+    // --- Render Unified Game View ---
+
+    // LOGIN / JOIN
     if (step === 'LOGIN') {
         return (
-            <div className="flex flex-col h-screen bg-gray-950 p-6 items-center justify-center text-white safe-area-inset">
-                <div className="mb-12 text-center">
+            <div className="flex flex-col h-screen bg-[#1a1b26] p-6 items-center justify-center text-white safe-area-inset overflow-hidden relative">
+                <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black opacity-50"></div>
+                <div className="z-10 mb-12 text-center">
                     <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-2">MENTE COLETIVA</h1>
                     <p className="text-gray-400">Think like everyone else.</p>
                 </div>
 
-                <div className="w-full max-w-sm space-y-4">
+                <div className="z-10 w-full max-w-sm space-y-4">
                     <input
                         className="w-full p-6 bg-gray-900 rounded-2xl border-2 border-gray-800 text-white text-xl placeholder-gray-600 focus:border-purple-500 focus:outline-none transition"
                         placeholder="YOUR NAME"
@@ -149,81 +161,46 @@ function Play() {
         </div>
     );
 
-    // LOBBY
-    if (gameState === 'LOBBY' && step !== 'LOGIN') {
-        return (
-            <div className="flex flex-col h-screen bg-gray-950 text-white">
-                <Header />
-                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-gray-950">
-                    <div className="text-8xl mb-8 animate-bounce">👋</div>
-                    <h1 className="text-3xl font-bold mb-4">You're in!</h1>
-                    <p className="text-gray-400">Watch the big screen.</p>
-                </div>
-            </div>
-        )
-    }
-
-    // INPUT
-    if (gameState === 'ANSWER_INPUT' && !hasAnswered) {
-        return (
-            <div className="flex flex-col h-screen bg-gray-950 text-white">
-                <Header />
-                <div className="flex-1 flex flex-col p-6">
-                    <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Question</h2>
-                    <div className="flex-1 overflow-y-auto mb-4">
-                        <p className="text-2xl font-bold leading-snug">{question?.text}</p>
-                    </div>
-
-                    <textarea
-                        className="w-full p-4 bg-gray-800 rounded-2xl border-2 border-purple-500 text-white text-xl h-40 mb-4 focus:outline-none focus:bg-gray-700"
-                        placeholder="Type your answer..."
-                        value={answer}
-                        onChange={e => setAnswer(e.target.value)}
-                    />
-                    <button
-                        onClick={submitAnswer}
-                        className="w-full py-6 bg-green-500 active:bg-green-600 rounded-2xl font-black text-2xl shadow-lg transition transform active:scale-95"
-                    >
-                        SEND
-                    </button>
-                </div>
-            </div>
-        )
-    }
-
-    // WAITING / ADS
+    // MAIN GAME CONTAINER
     return (
-        <div className="flex flex-col h-screen bg-gray-950 text-white">
+        <div className="flex flex-col h-screen bg-[#1a1b26] text-white">
             <Header />
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-                {hasAnswered && gameState === 'ANSWER_INPUT' ? (
-                    <>
-                        <h1 className="text-4xl font-black text-green-500 mb-2">Sent!</h1>
-                        <p className="text-gray-400 mb-8">Relax while others panic.</p>
-                        <AdSpace />
-                    </>
-                ) : (
+            <div className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black opacity-50"></div>
 
-                    <>
-                        {gameState === 'QUESTION' && (
-                            <div className="flex-1 flex flex-col justify-center">
-                                <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Look up!</h2>
-                                <p className="text-3xl font-black leading-tight animate-in fade-in zoom-in duration-500">{question?.text}</p>
-                            </div>
-                        )}
-                        {(gameState === 'REVEAL' || gameState === 'GROUPING') && (
-                            <div>
-                                <div className="text-2xl font-bold mb-4">Results Time!</div>
-                                <AdSpace />
-                            </div>
-                        )}
-                        {gameState === 'SCOREBOARD' && <div className="text-3xl font-bold text-yellow-400">Check the Ranking! 🏆</div>}
-                    </>
-                )}
-                {/* Debug verify state */}
-                {/* <div className="fixed bottom-1 left-1 text-[10px] text-gray-800 pointer-events-none">State: {gameState}</div> */}
+                {/* Content Layer */}
+                <div className="z-10 w-full h-full flex flex-col items-center justify-center">
+                    {gameState === 'LOBBY' && (
+                        <div className="text-center">
+                            <div className="text-8xl mb-8 animate-bounce">👋</div>
+                            <h1 className="text-3xl font-bold mb-4">You're in!</h1>
+                            <p className="text-gray-400">Waiting for Host to start...</p>
+                        </div>
+                    )}
+
+                    {(gameState === 'QUESTION' || gameState === 'ANSWER_INPUT') && (
+                        <QuestionView
+                            question={question}
+                            round={0} // Server doesn't send round to players yet? Need to check.
+                            players={players || {}}
+                            myAnswer={answer}
+                            setMyAnswer={setAnswer}
+                            onSubmit={submitAnswer}
+                            hasSubmitted={hasAnswered}
+                            timer={30}
+                        />
+                    )}
+
+                    {(gameState === 'GROUPING' || gameState === 'REVEAL') && (
+                        <RevealView answers={answers || []} players={players || {}} />
+                    )}
+
+                    {gameState === 'SCOREBOARD' && (
+                        <ScoreboardView players={players || {}} isHost={false} />
+                    )}
+                </div>
             </div>
-        </div >
+        </div>
     );
 }
 
