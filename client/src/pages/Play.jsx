@@ -25,6 +25,7 @@ function Play() {
         });
 
         socket.on('game_state_update', (data) => {
+            console.log("RECEIVED STATE UPDATE:", data);
             setGameState(data.state);
             if (data.state === 'QUESTION') {
                 setHasAnswered(false);

@@ -49,15 +49,15 @@ io.on('connection', (socket) => {
 
     socket.on('start_game', ({ roomCode }) => {
         // Verify host?
-        gameManager.startGame(roomCode);
+        gameManager.startGame(roomCode.toUpperCase());
     });
 
     socket.on('update_settings', ({ roomCode, settings }) => {
-        gameManager.updateSettings(roomCode, settings);
+        gameManager.updateSettings(roomCode.toUpperCase(), settings);
     });
 
     socket.on('submit_answer', ({ roomCode, answer }) => {
-        gameManager.submitAnswer(roomCode, socket.id, answer);
+        gameManager.submitAnswer(roomCode.toUpperCase(), socket.id, answer);
     });
 
     socket.on('disconnect', () => {
@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('play_again', ({ roomCode }) => {
-        gameManager.resetGame(roomCode);
+        gameManager.resetGame(roomCode.toUpperCase());
     });
 });
 
