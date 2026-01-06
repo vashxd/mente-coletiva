@@ -275,14 +275,38 @@ function Host() {
     const renderInput = () => (
         <div className="text-center max-w-6xl w-full h-full flex flex-col justify-between py-8 md:py-12 px-4">
             <div>
-                <h2 className="text-xl md:text-3xl text-pink-400 font-bold uppercase tracking-widest mb-4 md:mb-8 animate-pulse">Typing...</h2>
-                <h1 className="text-3xl md:text-5xl font-bold opacity-50 line-clamp-3">{question?.text}</h1>
+                {isHostPlayer && !hostSubmitted ? (
+                    <div className="flex flex-col items-center gap-4 mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <h2 className="text-xl text-purple-300 font-bold uppercase tracking-widest">Your Answer</h2>
+                        <div className="w-full max-w-2xl flex gap-2">
+                            <input
+                                value={hostAnswer}
+                                onChange={e => setHostAnswer(e.target.value)}
+                                className="flex-1 bg-gray-800 border-2 border-purple-500 rounded-xl px-6 py-4 text-2xl text-white placeholder-gray-500 focus:outline-none focus:shadow-[0_0_30px_rgba(168,85,247,0.5)] transition"
+                                placeholder="Type here..."
+                                autoFocus
+                                onKeyDown={e => e.key === 'Enter' && submitHostAnswer()}
+                            />
+                            <button
+                                onClick={submitHostAnswer}
+                                className="bg-green-500 hover:bg-green-600 text-white px-8 rounded-xl font-black uppercase text-xl transition transform active:scale-95"
+                            >
+                                SEND
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <h2 className="text-xl md:text-3xl text-pink-400 font-bold uppercase tracking-widest mb-4 md:mb-8 animate-pulse">
+                        {isHostPlayer && hostSubmitted ? "Answer Sent! Waiting for others..." : "Typing..."}
+                    </h2>
+                )}
+                <h1 className="text-3xl md:text-6xl font-bold opacity-90 leading-tight">{question?.text}</h1>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 max-h-[40vh] overflow-y-auto p-2">
                 {Object.values(players).map(p => (
                     <motion.div
-                        animate={{ scale: p.isAnswered ? 1.1 : 1 }}
+                        animate={{ scale: p.isAnswered ? 1.05 : 1 }}
                         key={p.id}
                         className={`p-3 md:p-4 rounded-xl text-center font-bold text-base md:text-xl border-4 transition-all duration-300 ${p.isAnswered ? 'bg-green-500 border-green-400 shadow-[0_0_20px_rgba(74,222,128,0.5)] text-white' : 'bg-gray-800 border-gray-700 text-gray-500'}`}
                     >
@@ -295,7 +319,7 @@ function Host() {
                 <motion.div
                     initial={{ width: '100%' }}
                     animate={{ width: '0%' }}
-                    transition={{ duration: 30, ease: "linear" }}
+                    transition={{ duration: 30, ease: "linear" }} // Should sync with server timer ideally
                     className="h-full bg-gradient-to-r from-pink-500 to-purple-600"
                 />
             </div>
@@ -364,77 +388,85 @@ function Host() {
                         </motion.div>
                     ))}
                 </div>
-            </div>
-        )
-    }
-
-
-    // Available Decks
-    const DECK_OPTIONS = [
-        { id: 'classic', label: 'Classic' },
-        { id: 'polemic', label: 'Polemic' },
-        { id: 'deep', label: 'Deep' },
-        { id: 'technology', label: 'Technology' },
-        { id: 'relationships', label: 'Relationships' },
-        { id: 'nostalgia', label: 'Nostalgia' },
-        { id: 'embarrassing', label: 'Vergonha' },
-        { id: 'travel', label: 'Travel' },
-        { id: 'money', label: 'Money' },
-        { id: 'party', label: 'Party' },
-        { id: 'cinema', label: 'Cinema' },
-        { id: 'comics', label: 'Comics' },
-        { id: 'popculture', label: 'Pop Culture' }
-    ];
-
-    const toggleDeck = (deckId) => {
-        let current = settings.questionDeck;
-        if (current === 'all') current = [];
-        if (typeof current === 'string') current = [current];
-
-        if (current.includes(deckId)) {
-            const newVal = current.filter(d => d !== deckId);
-            setSettings({ ...settings, questionDeck: newVal.length ? newVal : 'classic' });
-        } else {
-            setSettings({ ...settings, questionDeck: [...current, deckId] });
-        }
-    };
-
-    return (
-        <div className="min-h-screen bg-[#1a1b26] text-white flex flex-col items-center justify-center p-4 lg:p-12 overflow-hidden relative font-sans">
-
-            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black opacity-50"></div>
-
-            {/* HOST PLAYER OVERLAY */}
-            {isHostPlayer && gameState === 'ANSWER_INPUT' && !hostSubmitted && (
-                <motion.div
-                    initial={{ y: 100 }} animate={{ y: 0 }}
-                    className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t-2 border-purple-500 p-4 shadow-2xl flex gap-2 items-center justify-center"
+                </div>
+                
+                <button 
+                    onClick={() => socket.emit('play_again', { roomCode })}
+                    className="mx-auto mt-8 px-12 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-black text-2xl rounded-full shadow-xl transform hover:scale-105 transition"
                 >
-                    <input
-                        value={hostAnswer}
-                        onChange={e => setHostAnswer(e.target.value)}
-                        placeholder="Your Answer..."
-                        className="w-full max-w-md bg-gray-800 text-white rounded-xl px-4 py-3 text-lg border border-gray-600 focus:border-purple-500 focus:outline-none"
-                    />
-                    <button
-                        onClick={submitHostAnswer}
-                        className="bg-green-500 text-white p-3 rounded-xl font-bold hover:bg-green-600 shadow-lg"
-                    >
-                        SEND
-                    </button>
-                </motion.div>
-            )}
+                    PLAY AGAIN 🔄
+                </button>
+            </div >
+        )
+}
 
-            <div className="z-10 w-full h-full flex flex-col items-center">
-                {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
-                {gameState === 'LOBBY' && renderLobby()}
-                {gameState === 'QUESTION' && renderQuestion()}
-                {gameState === 'ANSWER_INPUT' && renderInput()}
-                {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
-                {gameState === 'SCOREBOARD' && renderScoreboard()}
-            </div>
-        </div >
-    );
+
+// Available Decks
+const DECK_OPTIONS = [
+    { id: 'classic', label: 'Classic' },
+    { id: 'polemic', label: 'Polemic' },
+    { id: 'deep', label: 'Deep' },
+    { id: 'technology', label: 'Technology' },
+    { id: 'relationships', label: 'Relationships' },
+    { id: 'nostalgia', label: 'Nostalgia' },
+    { id: 'embarrassing', label: 'Vergonha' },
+    { id: 'travel', label: 'Travel' },
+    { id: 'money', label: 'Money' },
+    { id: 'party', label: 'Party' },
+    { id: 'cinema', label: 'Cinema' },
+    { id: 'comics', label: 'Comics' },
+    { id: 'popculture', label: 'Pop Culture' }
+];
+
+const toggleDeck = (deckId) => {
+    let current = settings.questionDeck;
+    if (current === 'all') current = [];
+    if (typeof current === 'string') current = [current];
+
+    if (current.includes(deckId)) {
+        const newVal = current.filter(d => d !== deckId);
+        setSettings({ ...settings, questionDeck: newVal.length ? newVal : 'classic' });
+    } else {
+        setSettings({ ...settings, questionDeck: [...current, deckId] });
+    }
+};
+
+return (
+    <div className="min-h-screen bg-[#1a1b26] text-white flex flex-col items-center justify-center p-4 lg:p-12 overflow-hidden relative font-sans">
+
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black opacity-50"></div>
+
+        {/* HOST PLAYER OVERLAY */}
+        {isHostPlayer && gameState === 'ANSWER_INPUT' && !hostSubmitted && (
+            <motion.div
+                initial={{ y: 100 }} animate={{ y: 0 }}
+                className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t-2 border-purple-500 p-4 shadow-2xl flex gap-2 items-center justify-center"
+            >
+                <input
+                    value={hostAnswer}
+                    onChange={e => setHostAnswer(e.target.value)}
+                    placeholder="Your Answer..."
+                    className="w-full max-w-md bg-gray-800 text-white rounded-xl px-4 py-3 text-lg border border-gray-600 focus:border-purple-500 focus:outline-none"
+                />
+                <button
+                    onClick={submitHostAnswer}
+                    className="bg-green-500 text-white p-3 rounded-xl font-bold hover:bg-green-600 shadow-lg"
+                >
+                    SEND
+                </button>
+            </motion.div>
+        )}
+
+        <div className="z-10 w-full h-full flex flex-col items-center">
+            {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
+            {gameState === 'LOBBY' && renderLobby()}
+            {gameState === 'QUESTION' && renderQuestion()}
+            {gameState === 'ANSWER_INPUT' && renderInput()}
+            {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
+            {gameState === 'SCOREBOARD' && renderScoreboard()}
+        </div>
+    </div >
+);
 }
 
 export default Host;

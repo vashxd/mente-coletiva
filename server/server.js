@@ -63,6 +63,10 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         gameManager.handleDisconnect(socket.id);
     });
+
+    socket.on('play_again', ({ roomCode }) => {
+        gameManager.resetGame(roomCode);
+    });
 });
 
 server.listen(PORT, () => {

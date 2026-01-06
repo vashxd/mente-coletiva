@@ -147,6 +147,31 @@ class GameManager {
         this.nextRound(roomCode);
     }
 
+    resetGame(roomCode) {
+        const room = this.rooms[roomCode];
+        if (!room) return;
+
+        room.gameState = 'LOBBY';
+        room.round = 0;
+        room.usedQuestions = [];
+        room.answers = [];
+        room.timerId = null;
+
+        // Reset players
+        Object.values(room.players).forEach(p => {
+            p.score = 0;
+            p.answer = null;
+            p.isAnswered = false;
+            p.hasPinkCow = false;
+        });
+
+        this.io.to(roomCode).emit('game_state_update', {
+            state: 'LOBBY',
+            players: room.players,
+            batch: true // Force update
+        });
+    }
+
     clearRoomTimer(room) {
         if (room.timerId) {
             clearTimeout(room.timerId);
