@@ -112,8 +112,14 @@ function Host() {
                         onChange={e => setHostNickname(e.target.value)}
                         className="bg-gray-900 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500"
                         placeholder="Host Name"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                joinAsHost();
+                            }
+                        }}
                     />
-                    <button onClick={joinAsHost} className="px-6 py-2 bg-purple-600 rounded-lg font-bold hover:bg-purple-700">
+                    <button type="button" onClick={joinAsHost} className="px-6 py-2 bg-purple-600 rounded-lg font-bold hover:bg-purple-700">
                         Play too!
                     </button>
                 </div>
