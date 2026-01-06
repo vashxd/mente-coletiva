@@ -178,7 +178,14 @@ function Play() {
                         </div>
                     )}
 
-                    {(gameState === 'QUESTION' || gameState === 'ANSWER_INPUT') && (
+                    {gameState === 'QUESTION' && (
+                        <div className="flex-1 flex flex-col justify-center text-center">
+                            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Look up!</h2>
+                            <p className="text-4xl md:text-6xl font-black leading-tight animate-in fade-in zoom-in duration-500">{question?.text}</p>
+                        </div>
+                    )}
+
+                    {gameState === 'ANSWER_INPUT' && (
                         <QuestionView
                             question={question}
                             round={0} // Server doesn't send round to players yet? Need to check.
