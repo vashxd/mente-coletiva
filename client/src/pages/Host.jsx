@@ -388,9 +388,9 @@ function Host() {
                         </motion.div>
                     ))}
                 </div>
-                </div>
-                
-                <button 
+
+
+                <button
                     onClick={() => socket.emit('play_again', { roomCode })}
                     className="mx-auto mt-8 px-12 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-black text-2xl rounded-full shadow-xl transform hover:scale-105 transition"
                 >
@@ -398,75 +398,75 @@ function Host() {
                 </button>
             </div >
         )
-}
-
-
-// Available Decks
-const DECK_OPTIONS = [
-    { id: 'classic', label: 'Classic' },
-    { id: 'polemic', label: 'Polemic' },
-    { id: 'deep', label: 'Deep' },
-    { id: 'technology', label: 'Technology' },
-    { id: 'relationships', label: 'Relationships' },
-    { id: 'nostalgia', label: 'Nostalgia' },
-    { id: 'embarrassing', label: 'Vergonha' },
-    { id: 'travel', label: 'Travel' },
-    { id: 'money', label: 'Money' },
-    { id: 'party', label: 'Party' },
-    { id: 'cinema', label: 'Cinema' },
-    { id: 'comics', label: 'Comics' },
-    { id: 'popculture', label: 'Pop Culture' }
-];
-
-const toggleDeck = (deckId) => {
-    let current = settings.questionDeck;
-    if (current === 'all') current = [];
-    if (typeof current === 'string') current = [current];
-
-    if (current.includes(deckId)) {
-        const newVal = current.filter(d => d !== deckId);
-        setSettings({ ...settings, questionDeck: newVal.length ? newVal : 'classic' });
-    } else {
-        setSettings({ ...settings, questionDeck: [...current, deckId] });
     }
-};
 
-return (
-    <div className="min-h-screen bg-[#1a1b26] text-white flex flex-col items-center justify-center p-4 lg:p-12 overflow-hidden relative font-sans">
 
-        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black opacity-50"></div>
+    // Available Decks
+    const DECK_OPTIONS = [
+        { id: 'classic', label: 'Classic' },
+        { id: 'polemic', label: 'Polemic' },
+        { id: 'deep', label: 'Deep' },
+        { id: 'technology', label: 'Technology' },
+        { id: 'relationships', label: 'Relationships' },
+        { id: 'nostalgia', label: 'Nostalgia' },
+        { id: 'embarrassing', label: 'Vergonha' },
+        { id: 'travel', label: 'Travel' },
+        { id: 'money', label: 'Money' },
+        { id: 'party', label: 'Party' },
+        { id: 'cinema', label: 'Cinema' },
+        { id: 'comics', label: 'Comics' },
+        { id: 'popculture', label: 'Pop Culture' }
+    ];
 
-        {/* HOST PLAYER OVERLAY */}
-        {isHostPlayer && gameState === 'ANSWER_INPUT' && !hostSubmitted && (
-            <motion.div
-                initial={{ y: 100 }} animate={{ y: 0 }}
-                className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t-2 border-purple-500 p-4 shadow-2xl flex gap-2 items-center justify-center"
-            >
-                <input
-                    value={hostAnswer}
-                    onChange={e => setHostAnswer(e.target.value)}
-                    placeholder="Your Answer..."
-                    className="w-full max-w-md bg-gray-800 text-white rounded-xl px-4 py-3 text-lg border border-gray-600 focus:border-purple-500 focus:outline-none"
-                />
-                <button
-                    onClick={submitHostAnswer}
-                    className="bg-green-500 text-white p-3 rounded-xl font-bold hover:bg-green-600 shadow-lg"
+    const toggleDeck = (deckId) => {
+        let current = settings.questionDeck;
+        if (current === 'all') current = [];
+        if (typeof current === 'string') current = [current];
+
+        if (current.includes(deckId)) {
+            const newVal = current.filter(d => d !== deckId);
+            setSettings({ ...settings, questionDeck: newVal.length ? newVal : 'classic' });
+        } else {
+            setSettings({ ...settings, questionDeck: [...current, deckId] });
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-[#1a1b26] text-white flex flex-col items-center justify-center p-4 lg:p-12 overflow-hidden relative font-sans">
+
+            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black opacity-50"></div>
+
+            {/* HOST PLAYER OVERLAY */}
+            {isHostPlayer && gameState === 'ANSWER_INPUT' && !hostSubmitted && (
+                <motion.div
+                    initial={{ y: 100 }} animate={{ y: 0 }}
+                    className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t-2 border-purple-500 p-4 shadow-2xl flex gap-2 items-center justify-center"
                 >
-                    SEND
-                </button>
-            </motion.div>
-        )}
+                    <input
+                        value={hostAnswer}
+                        onChange={e => setHostAnswer(e.target.value)}
+                        placeholder="Your Answer..."
+                        className="w-full max-w-md bg-gray-800 text-white rounded-xl px-4 py-3 text-lg border border-gray-600 focus:border-purple-500 focus:outline-none"
+                    />
+                    <button
+                        onClick={submitHostAnswer}
+                        className="bg-green-500 text-white p-3 rounded-xl font-bold hover:bg-green-600 shadow-lg"
+                    >
+                        SEND
+                    </button>
+                </motion.div>
+            )}
 
-        <div className="z-10 w-full h-full flex flex-col items-center">
-            {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
-            {gameState === 'LOBBY' && renderLobby()}
-            {gameState === 'QUESTION' && renderQuestion()}
-            {gameState === 'ANSWER_INPUT' && renderInput()}
-            {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
-            {gameState === 'SCOREBOARD' && renderScoreboard()}
-        </div>
-    </div >
-);
+            <div className="z-10 w-full h-full flex flex-col items-center">
+                {gameState === 'LOADING' && <div className="text-xl md:text-2xl font-mono animate-pulse">Initializing Neural Link...</div>}
+                {gameState === 'LOBBY' && renderLobby()}
+                {gameState === 'QUESTION' && renderQuestion()}
+                {gameState === 'ANSWER_INPUT' && renderInput()}
+                {(gameState === 'GROUPING' || gameState === 'REVEAL') && renderReveal()}
+                {gameState === 'SCOREBOARD' && renderScoreboard()}
+            </div>
+        </div >
+    );
 }
 
 export default Host;
