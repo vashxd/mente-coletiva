@@ -30,13 +30,7 @@ class GameManager {
             timerId: null, // Track active timer to clear it
             startTime: Date.now(), // For time-limit games
             isPremium: false, // Placeholder for monetization
-            settings: {
-                maxRounds: 5,
-                timerDuration: 30,
-                questionDeck: 'classic',
-                winCondition: 'rounds', // or 'score', 'time'
-                winValue: 5 // Default 5 rounds
-            }
+
         };
 
         console.log(`Room created: ${code} by Host ${hostSocketId}`);
