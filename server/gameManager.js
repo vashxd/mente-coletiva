@@ -1,5 +1,6 @@
 const questions = require('./questions');
 const stringSimilarity = require('string-similarity');
+const semanticMatcher = require('./semanticMatcher');
 
 class GameManager {
     constructor(io) {
@@ -135,7 +136,6 @@ class GameManager {
         // For now, assume settings are set in lobby
 
         room.round = 0;
-        room.usedQuestions = [];
         room.startTime = Date.now();
         this.clearRoomTimer(room);
 
@@ -152,7 +152,8 @@ class GameManager {
 
         room.gameState = 'LOBBY';
         room.round = 0;
-        room.usedQuestions = [];
+        room.round = 0;
+        // room.usedQuestions = []; // KEEP HISTORY across games
         room.answers = [];
         room.timerId = null;
 
@@ -213,10 +214,16 @@ class GameManager {
             deckQuestions = questions[selection] || questions['classic'] || [];
         }
 
-        const availableQuestions = deckQuestions.filter(q => !room.usedQuestions.includes(q.id));
+        let availableQuestions = deckQuestions.filter(q => !room.usedQuestions.includes(q.id));
         if (availableQuestions.length === 0) {
-            // Should not happen with enough questions, but loop restart if needed
-            room.usedQuestions = [];
+            // Out of questions for this specific deck selection
+            // Forget ONLY the questions from 'deckQuestions' so we can play them again
+            // blocking repetition of *other* decks that might be selected later
+            const deckIds = deckQuestions.map(q => q.id);
+            room.usedQuestions = room.usedQuestions.filter(id => !deckIds.includes(id));
+
+            // Now all deckQuestions are available again
+            availableQuestions = deckQuestions;
         }
 
         const randomQ = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
@@ -421,17 +428,11 @@ class GameManager {
     }
 
     normalizeText(text) {
-        return text.toLowerCase()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove accents
-            .trim();
+        return semanticMatcher.normalize(text);
     }
 
     isSimilar(t1, t2) {
-        if (t1 === t2) return true;
-        // Edit distance check for short words, or string similarity for longer
-        // Basic Levenshtein via string-similarity is overkill but easy
-        const similarity = stringSimilarity.compareTwoStrings(t1, t2);
-        return similarity > 0.8; // 80% similarity threshold
+        return semanticMatcher.isSimilar(t1, t2);
     }
 
     generateRoomCode() {

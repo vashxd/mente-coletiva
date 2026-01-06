@@ -1,0 +1,24 @@
+﻿Room created: AIHH by Host host1
+--- TEST START ---
+--- Game 1 Start ---
+[DEBUG] STARTING GAME for Room: AIHH
+[DEBUG] Sockets in Room AIHH: []
+R1 Question (Auto): t3
+Used: [ 't3' ]
+--- Triggering Next Round (2) ---
+R2 Question: t1
+Used: [ 't3', 't1' ]
+--- Triggering Next Round (3) ---
+R3 Question: t2
+Used: [ 't3', 't1', 't2' ]
+--- Triggering Next Round (4 - Recycle?) ---
+R4 Question: t1
+Used: [ 't1' ]
+--- Game 2 Reset ---
+Used after Reset: [ 't1' ]
+--- Game 2 Start ---
+[DEBUG] STARTING GAME for Room: AIHH
+[DEBUG] Sockets in Room AIHH: []
+G2 R1 Question: t2
+Used: [ 't1', 't2' ]
+--- TEST END ---
