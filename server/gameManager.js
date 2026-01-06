@@ -124,7 +124,7 @@ class GameManager {
     }
 
 
-    startGame(roomCode) {
+    async startGame(roomCode) {
         const room = this.rooms[roomCode];
         if (!room) return;
 
@@ -138,6 +138,11 @@ class GameManager {
         room.usedQuestions = [];
         room.startTime = Date.now();
         this.clearRoomTimer(room);
+
+        console.log(`[DEBUG] STARTING GAME for Room: ${roomCode}`);
+        const socketsInRoom = await this.io.in(roomCode).fetchSockets();
+        console.log(`[DEBUG] Sockets in Room ${roomCode}:`, socketsInRoom.map(s => s.id));
+
         this.nextRound(roomCode);
     }
 
