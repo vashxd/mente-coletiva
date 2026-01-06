@@ -274,6 +274,35 @@ function Host() {
                             </div>
                         </div>
 
+                        {/* Win Condition */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-gray-400 font-bold uppercase tracking-wider">Win Condition</label>
+                                <select
+                                    value={settings.winCondition}
+                                    onChange={e => setSettings({ ...settings, winCondition: e.target.value })}
+                                    className="w-full bg-gray-800 text-white border border-gray-600 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500"
+                                >
+                                    <option value="rounds">Rounds Played</option>
+                                    <option value="score">Target Score</option>
+                                    <option value="time">Time Limit (Mins)</option>
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-gray-400 font-bold uppercase tracking-wider">
+                                    {settings.winCondition === 'rounds' && 'Max Rounds'}
+                                    {settings.winCondition === 'score' && 'Target Score'}
+                                    {settings.winCondition === 'time' && 'Minutes'}
+                                </label>
+                                <input
+                                    type="number"
+                                    value={settings.winValue}
+                                    onChange={e => setSettings({ ...settings, winValue: Number(e.target.value) })}
+                                    className="w-full bg-gray-800 text-white border border-gray-600 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500"
+                                />
+                            </div>
+                        </div>
+
                         <button onClick={() => setShowSettings(false)} className="w-full py-4 bg-purple-600 hover:bg-purple-700 rounded-xl font-bold uppercase">Close</button>
                     </div>
                 </div>
