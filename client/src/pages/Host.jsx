@@ -168,6 +168,7 @@ function Host() {
             <div className="flex justify-between items-center p-4 bg-gray-900 border-b border-gray-800 z-50">
                 <div className="flex items-center gap-4">
                     <div className="font-bold text-gray-400">{nickname} (HOST)</div>
+                    <div className="px-3 py-1 bg-gray-800 rounded-lg text-green-400 font-bold">{players[socket.id]?.score || 0} PTS</div>
                     <div className="font-mono text-purple-400 font-black tracking-widest bg-gray-800 px-3 py-1 rounded">CODE: {roomCode}</div>
                 </div>
                 <div className="flex gap-2">
